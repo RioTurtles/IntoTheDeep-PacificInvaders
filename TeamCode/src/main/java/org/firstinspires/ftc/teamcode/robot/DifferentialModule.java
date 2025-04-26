@@ -66,7 +66,7 @@ public class DifferentialModule {
      * of the scoring module.
      * @param target The target value, relative to the servos.
      */
-    protected final void setPitch(double target) {
+    public final void setPitch(double target) {
         this.base = target;
         apply();
     }

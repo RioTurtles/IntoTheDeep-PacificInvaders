@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,20 +17,26 @@ import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.DualServoModule;
 import org.firstinspires.ftc.teamcode.robot.MultipleMotorSystem;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 public class Project1Hardware {
     DcMotorEx frontLeft, frontRight, backLeft, backRight;
     DcMotorEx linearLeft, linearRight, verticalLeft, verticalRight;
     ServoImplEx intakeLeft, intakeRight, clawIntake;
     ServoImplEx puncherLeft, puncherRight, armLeft, armRight, turret, clawScoring;
     IMU imu;
+    Limelight3A limelight3A;
 
     Drivetrain drivetrain;
     LinearSlider linearSlider;
     VerticalSlider verticalSlider;
     Intake intake;
     Scoring scoring;
+    Limelight limelight;
 
-    public Project1Hardware(HardwareMap hardwareMap) {
+    public Project1Hardware(@NonNull HardwareMap hardwareMap) {
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -42,6 +54,7 @@ public class Project1Hardware {
         armRight = hardwareMap.get(ServoImplEx.class, "armRight");
         turret = hardwareMap.get(ServoImplEx.class, "turret");
         clawScoring = hardwareMap.get(ServoImplEx.class, "clawScoring");
+        limelight3A = hardwareMap.get(Limelight3A.class, "Limelight 3A");
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -54,6 +67,7 @@ public class Project1Hardware {
         verticalSlider = new VerticalSlider(verticalLeft, verticalRight);
         intake = new Intake(intakeLeft, intakeRight, clawIntake);
         scoring = new Scoring(armLeft, armRight, puncherLeft, puncherRight, turret, clawScoring);
+        limelight = new Limelight(limelight3A);
     }
 
     public static class LinearSlider extends MultipleMotorSystem {
@@ -122,5 +136,111 @@ public class Project1Hardware {
 
         public void clawOpen() {claw.setPosition(0);}
         public void clawClose() {claw.setPosition(1);}
+    }
+
+    public static class Limelight {
+        private final Limelight3A limelight;
+        public Limelight(Limelight3A limelight) {this.limelight = limelight;}
+
+        public void start(int pipeline) {
+            switchPipeline(Colour.YELLOW);
+            limelight.start();
+        }
+
+        public void switchPipeline(int pipeline) {limelight.pipelineSwitch(pipeline);}
+        public void switchPipeline(Colour colour) {limelight.pipelineSwitch(colour.index());}
+
+        public @Nullable LLResult getValidResults() {
+            LLResult result = limelight.getLatestResult();
+            if (Objects.isNull(result)) return null; else {
+                // Nested-ifs as isValid() could produce NullPointerException if result is null
+                if (result.isValid()) return result; else return null;
+            }
+        }
+
+        public @Nullable List<LLResultTypes.ColorResult> getValidColourResults() {
+            LLResult result = getValidResults();
+            if (Objects.isNull(result)) return null; else {
+                assert result != null;
+                return result.getColorResults();
+            }
+        }
+
+        public @Nullable Double getOrientation() {
+            List<LLResultTypes.ColorResult> results = getValidColourResults();
+            if (Objects.isNull(results)) return null;
+            assert results != null;
+
+            double maxTA = 0;
+            double bestOrientation = 0;
+            for (LLResultTypes.ColorResult result : results) {
+                if (result.getTargetArea() >= 0.05 && result.getTargetArea() > maxTA) {
+                    List<Coordinate> list = Coordinate.fromTargetCorners(result.getTargetCorners());
+                    double k = Coordinate.getMaxXDist(list) / Coordinate.getMaxYDist(list);
+                    bestOrientation = Math.toDegrees(Math.atan((7 - 3 * k) / (7 * k - 3)));
+                }
+            }
+
+            return bestOrientation;
+        }
+
+        private static class Coordinate {
+            public double x;
+            public double y;
+            public Coordinate(double x, double y) {this.x = x; this.y = y;}
+            public double getX() {return x;}
+            public double getY() {return y;}
+
+            public static List<Coordinate> fromTargetCorners(List<List<Double>> corners) {
+                List<Coordinate> result = Collections.emptyList();
+                for (List<Double> corner : corners)
+                    result.add(new Coordinate(corner.get(0), corner.get(1)));
+                return result;
+            }
+
+            public static double getMaxXDist(List<Coordinate> coordinates) {
+                if (coordinates.size() < 2) {
+                    throw new IllegalArgumentException("At least two coordinates are required.");
+                }
+
+                double maxDistance = 0;
+
+                for (int i = 0; i < coordinates.size(); i++) {
+                    for (int j = i + 1; j < coordinates.size(); j++) {
+                        double distance = Math.abs(coordinates.get(i).x - coordinates.get(j).x);
+                        if (distance > maxDistance) maxDistance = distance;
+                    }
+                }
+
+                return maxDistance;
+            }
+
+            public static double getMaxYDist(List<Coordinate> coordinates) {
+                if (coordinates.size() < 2) {
+                    throw new IllegalArgumentException("At least two coordinates are required.");
+                }
+
+                double maxDistance = 0;
+
+                for (int i = 0; i < coordinates.size(); i++) {
+                    for (int j = i + 1; j < coordinates.size(); j++) {
+                        double distance = Math.abs(coordinates.get(i).y - coordinates.get(j).y);
+                        if (distance > maxDistance) maxDistance = distance;
+                    }
+                }
+
+                return maxDistance;
+            }
+        }
+    }
+
+    public enum Colour {
+        YELLOW(1),
+        RED(2),
+        BLUE(3);
+
+        private final int index;
+        public int index() {return this.index;}
+        Colour(int index) {this.index = index;}
     }
 }
