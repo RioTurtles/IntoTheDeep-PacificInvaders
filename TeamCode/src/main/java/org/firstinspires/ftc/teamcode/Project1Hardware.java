@@ -7,9 +7,12 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.robot.DifferentialModule;
@@ -62,13 +65,42 @@ public class Project1Hardware {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         )));
 
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        linearRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        verticalLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        verticalRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeLeft.setDirection(Servo.Direction.FORWARD);
+        intakeRight.setDirection(Servo.Direction.REVERSE);
+        clawIntake.setDirection(Servo.Direction.FORWARD);
+        puncherLeft.setDirection(Servo.Direction.REVERSE);
+        puncherRight.setDirection(Servo.Direction.FORWARD);
+        armLeft.setDirection(Servo.Direction.REVERSE);
+        armRight.setDirection(Servo.Direction.REVERSE);
+        turret.setDirection(Servo.Direction.FORWARD);
+        clawScoring.setDirection(Servo.Direction.FORWARD);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         drivetrain = new Drivetrain(frontLeft, frontRight, backLeft, backRight);
         linearSlider = new LinearSlider(linearLeft, linearRight);
         verticalSlider = new VerticalSlider(verticalLeft, verticalRight);
         intake = new Intake(intakeLeft, intakeRight, clawIntake);
         scoring = new Scoring(armLeft, armRight, puncherLeft, puncherRight, turret, clawScoring);
         limelight = new Limelight(limelight3A);
+
+        linearSlider.reset();
+        verticalSlider.reset();
     }
+
+    public double getHeadingRad() {return imu.getRobotYawPitchRollAngles().getYaw();}
+    public void resetIMU() {imu.resetYaw();}
 
     public static class LinearSlider extends MultipleMotorSystem {
         public LinearSlider(DcMotorEx... motors) {super(motors);}
@@ -95,10 +127,10 @@ public class Project1Hardware {
         }
 
         public void setIntake() {setPitch(HALF);}
-        public void setTransfer() {setPosition(0.5, 0);}
+        public void setTransfer() {setPosition(1, 0);}
 
-        public void clawOpen() {claw.setPosition(0);}
-        public void clawClose() {claw.setPosition(1);}
+        public void clawOpen() {claw.setPosition(0.2);}
+        public void clawClose() {claw.setPosition(0);}
     }
 
     public static class Scoring {
@@ -120,22 +152,29 @@ public class Project1Hardware {
 
         public static class Arm extends DualServoModule {
             public Arm(ServoImplEx left, ServoImplEx right) {super(left, right);}
-            public void setTransfer() {setPosition(0.5);}
-            public void setScoring() {setPosition(1);}
+            public void setTransfer() {setPosition(0);}
+            public void setScoring() {setPosition(0.68);}
         }
 
         public static class Puncher extends DualServoModule {
-            public Puncher(ServoImplEx left, ServoImplEx right) {super(left, right);}
-            public void setRetracted() {setPosition(0);}
-            public void setExtended() {setPosition(1);}
+            public static final double RETRACTED = 0.19;
+            public static final double EXTENDED = 0.59;
+            public Puncher(ServoImplEx left, ServoImplEx right) {super(left, right, +0.02, 0);}
+
+            public void setRetracted() {setPosition(RETRACTED);}
+            public void setExtended() {setPosition(EXTENDED);}
+
+            public void setLength(double length) {
+                setPosition(RETRACTED + (EXTENDED - RETRACTED) * length);
+            }
         }
 
         public void setTurret(double angle) {
             turret.setPosition((angle + TURRET_RANGE / 2) / TURRET_RANGE);
         }
 
-        public void clawOpen() {claw.setPosition(0);}
-        public void clawClose() {claw.setPosition(1);}
+        public void clawOpen() {claw.setPosition(0.3);}
+        public void clawClose() {claw.setPosition(0);}
     }
 
     public static class Limelight {
@@ -143,9 +182,13 @@ public class Project1Hardware {
         public Limelight(Limelight3A limelight) {this.limelight = limelight;}
 
         public void start(int pipeline) {
-            switchPipeline(Colour.YELLOW);
+            switchPipeline(pipeline);
             limelight.start();
         }
+
+        public void start(Colour colour) {start(colour.index());}
+        public void start() {start(1);}
+        public void stop() {limelight.stop();}
 
         public void switchPipeline(int pipeline) {limelight.pipelineSwitch(pipeline);}
         public void switchPipeline(Colour colour) {limelight.pipelineSwitch(colour.index());}
@@ -158,22 +201,22 @@ public class Project1Hardware {
             }
         }
 
-        public @Nullable List<LLResultTypes.ColorResult> getValidColourResults() {
+        public @Nullable List<LLResultTypes.DetectorResult> getValidDetections() {
             LLResult result = getValidResults();
             if (Objects.isNull(result)) return null; else {
                 assert result != null;
-                return result.getColorResults();
+                return result.getDetectorResults();
             }
         }
 
         public @Nullable Double getOrientation() {
-            List<LLResultTypes.ColorResult> results = getValidColourResults();
+            List<LLResultTypes.DetectorResult> results = getValidDetections();
             if (Objects.isNull(results)) return null;
             assert results != null;
 
             double maxTA = 0;
             double bestOrientation = 0;
-            for (LLResultTypes.ColorResult result : results) {
+            for (LLResultTypes.DetectorResult result : results) {
                 if (result.getTargetArea() >= 0.05 && result.getTargetArea() > maxTA) {
                     List<Coordinate> list = Coordinate.fromTargetCorners(result.getTargetCorners());
                     double k = Coordinate.getMaxXDist(list) / Coordinate.getMaxYDist(list);
@@ -237,7 +280,8 @@ public class Project1Hardware {
     public enum Colour {
         YELLOW(1),
         RED(2),
-        BLUE(3);
+        BLUE(3),
+        NEURAL(4);
 
         private final int index;
         public int index() {return this.index;}

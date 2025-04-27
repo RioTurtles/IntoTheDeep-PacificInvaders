@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class DifferentialModule {
     ServoImplEx left, right;
-    public final static double HALF = 0.22;
-    public static double OFFSET_LEFT = 0.0;
-    public static double OFFSET_RIGHT = 0.0;
+    public final static double HALF = 0.4;
+    private double offsetLeft = 0.0;
+    private double offsetRight = 0.0;
     private double base, diffLeft, diffRight;
 
     public DifferentialModule(ServoImplEx left, ServoImplEx right) {
@@ -16,10 +16,19 @@ public class DifferentialModule {
         diffRight = 0;
     }
 
+    public DifferentialModule(ServoImplEx left, ServoImplEx right, double offsetL, double offsetR) {
+        this.left = left;
+        this.right = right;
+        diffLeft = 0;
+        diffRight = 0;
+        offsetLeft = offsetL;
+        offsetRight = offsetR;
+    }
+
     /** Sets servos' positions. Call after a method. */
     private void apply() {
-        left.setPosition(base + OFFSET_LEFT + diffLeft);
-        right.setPosition(base + OFFSET_RIGHT + diffRight);
+        left.setPosition(base + offsetLeft + diffLeft);
+        right.setPosition(base + offsetRight + diffRight);
     }
 
     /**

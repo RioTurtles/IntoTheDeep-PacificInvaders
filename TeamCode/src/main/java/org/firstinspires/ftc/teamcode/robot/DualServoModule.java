@@ -11,11 +11,11 @@ public class DualServoModule {
         this.right = right;
     }
 
-    public DualServoModule(ServoImplEx left, ServoImplEx right, double dL, double dR) {
+    public DualServoModule(ServoImplEx left, ServoImplEx right, double offsetL, double offsetR) {
         this.left = left;
         this.right = right;
-        offsetLeft = dL;
-        offsetRight = dR;
+        offsetLeft = offsetL;
+        offsetRight = offsetR;
     }
 
     public void setPosition(double position) {
