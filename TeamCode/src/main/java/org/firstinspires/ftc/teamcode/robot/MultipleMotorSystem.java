@@ -3,12 +3,20 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import java.util.Objects;
+
 public class MultipleMotorSystem {
     public DcMotorEx[] motors;
+    private Integer maximum, minimum;
+    private int tolerance = 5;
 
     public MultipleMotorSystem(DcMotorEx... motors) {
         this.motors = motors;
     }
+
+    public void setMaximum(int maximum) {this.maximum = maximum;}
+    public void setMinimum(int maximum) {this.minimum = maximum;}
+    public void setTolerance(int tolerance) {this.tolerance = tolerance;}
 
     public void reset() {
         for (DcMotorEx motor : motors) {
@@ -50,6 +58,25 @@ public class MultipleMotorSystem {
         for (DcMotorEx motor : motors) motor.setPositionPIDFCoefficients(kP);
     }
 
-    public void extend(int rate) {setPosition(motors[0].getTargetPosition() + rate);}
-    public void extend() {extend(5);}
+    public void extend(int rate) {
+        int current = motors[0].getTargetPosition();
+        int result = current + rate;
+
+        if (!Objects.isNull(minimum)) {
+            if (current + rate < minimum) result = minimum;
+        } else if (!Objects.isNull(maximum)) {
+            if (current + rate > maximum) result = maximum;
+        }
+
+        setPosition(result);
+    }
+
+    public void powerReset(double power) {
+        setPower(power);
+        for (DcMotorEx motor : motors) motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public boolean inPosition() {
+        return Math.abs(getCurrentPosition() - motors[0].getTargetPosition()) <= tolerance;
+    }
 }

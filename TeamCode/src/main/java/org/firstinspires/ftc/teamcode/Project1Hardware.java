@@ -14,7 +14,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.DifferentialModule;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.DualServoModule;
@@ -38,6 +40,9 @@ public class Project1Hardware {
     Intake intake;
     Scoring scoring;
     Limelight limelight;
+
+    Mode mode;
+    Height height;
 
     public Project1Hardware(@NonNull HardwareMap hardwareMap) {
         frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
@@ -97,19 +102,33 @@ public class Project1Hardware {
 
         linearSlider.reset();
         verticalSlider.reset();
+
+        mode = Mode.SAMPLE;
+        height = Height.HIGH;
     }
 
     public double getHeadingRad() {return imu.getRobotYawPitchRollAngles().getYaw();}
+    public double getHeadingDeg() {return Math.toDegrees(getHeadingRad());}
     public void resetIMU() {imu.resetYaw();}
 
     public static class LinearSlider extends MultipleMotorSystem {
-        public LinearSlider(DcMotorEx... motors) {super(motors);}
+        public LinearSlider(DcMotorEx... motors) {
+            super(motors);
+            setMinimum(0);
+            setMaximum(500);  // tune this
+        }
+
         public void setExtended() {setPosition(500);}
         public void retract() {setPosition(0);}
     }
 
     public static class VerticalSlider extends MultipleMotorSystem {
-        public VerticalSlider(DcMotorEx... motors) {super(motors);}
+        public VerticalSlider(DcMotorEx... motors) {
+            super(motors);
+            setMinimum(0);
+            setMaximum(3800);  // tune this
+        }
+
         public void setHighBasket() {setPosition(3000);}
         public void setLowBasket() {setPosition(1500);}
         public void setHighChamber() {setPosition(1800);}
@@ -120,6 +139,7 @@ public class Project1Hardware {
 
     public static class Intake extends DifferentialModule {
         ServoImplEx claw;
+        boolean clawOpen = false;
 
         public Intake(ServoImplEx left, ServoImplEx right, ServoImplEx claw) {
             super(left, right);
@@ -127,10 +147,11 @@ public class Project1Hardware {
         }
 
         public void setIntake() {setPitch(HALF);}
+        public void setIntakeRaised() {setPitch(0.5);}
         public void setTransfer() {setPosition(1, 0);}
 
-        public void clawOpen() {claw.setPosition(0.2);}
-        public void clawClose() {claw.setPosition(0);}
+        public void clawOpen() {claw.setPosition(0.2); clawOpen = true;}
+        public void clawClose() {claw.setPosition(0); clawOpen = false;}
     }
 
     public static class Scoring {
@@ -138,6 +159,7 @@ public class Project1Hardware {
         Puncher puncher;
         ServoImplEx turret, claw;
         private final static double TURRET_RANGE = 255;
+        boolean clawOpen = false;
 
         public Scoring(
                 ServoImplEx armLeft, ServoImplEx armRight,
@@ -162,6 +184,7 @@ public class Project1Hardware {
             public Puncher(ServoImplEx left, ServoImplEx right) {super(left, right, +0.02, 0);}
 
             public void setRetracted() {setPosition(RETRACTED);}
+            public void setAim() {setPosition((RETRACTED - EXTENDED) / 2);}
             public void setExtended() {setPosition(EXTENDED);}
 
             public void setLength(double length) {
@@ -170,11 +193,21 @@ public class Project1Hardware {
         }
 
         public void setTurret(double angle) {
-            turret.setPosition((angle + TURRET_RANGE / 2) / TURRET_RANGE);
+            turret.setPosition(Range.clip(
+                    (angle + TURRET_RANGE / 2) / TURRET_RANGE,
+                    0.15, 0.85
+            ));
         }
 
-        public void clawOpen() {claw.setPosition(0.3);}
-        public void clawClose() {claw.setPosition(0);}
+        public void alignTurret(double imu, double target) {
+            double difference = target - imu;
+            if (difference > 180) difference -= 360;
+            if (difference < -180) difference += 360;
+            setTurret(-difference);
+        }
+
+        public void clawOpen() {claw.setPosition(0.3); clawOpen = true;}
+        public void clawClose() {claw.setPosition(0); clawOpen = false;}
     }
 
     public static class Limelight {
@@ -209,22 +242,28 @@ public class Project1Hardware {
             }
         }
 
-        public @Nullable Double getOrientation() {
+        public @Nullable Double[] getData() {
             List<LLResultTypes.DetectorResult> results = getValidDetections();
             if (Objects.isNull(results)) return null;
             assert results != null;
 
             double maxTA = 0;
-            double bestOrientation = 0;
+            @Nullable Double[] bestData = null;
             for (LLResultTypes.DetectorResult result : results) {
                 if (result.getTargetArea() >= 0.05 && result.getTargetArea() > maxTA) {
                     List<Coordinate> list = Coordinate.fromTargetCorners(result.getTargetCorners());
                     double k = Coordinate.getMaxXDist(list) / Coordinate.getMaxYDist(list);
-                    bestOrientation = Math.toDegrees(Math.atan((7 - 3 * k) / (7 * k - 3)));
+                    double bestOrientation = Math.toDegrees(Math.atan((7 - 3 * k) / (7 * k - 3)));
+
+                    bestData = new Double[]{
+                            result.getTargetXPixels(),
+                            result.getTargetYPixels(),
+                            90 - bestOrientation
+                    };
                 }
             }
 
-            return bestOrientation;
+            return bestData;
         }
 
         private static class Coordinate {
@@ -287,4 +326,7 @@ public class Project1Hardware {
         public int index() {return this.index;}
         Colour(int index) {this.index = index;}
     }
+
+    public enum Mode {SAMPLE, SPECIMEN}
+    public enum Height {HIGH, LOW}
 }
