@@ -144,7 +144,7 @@ public class TeleoperatedV1 extends LinearOpMode {
                 }
                 else if (timer1.milliseconds() > 400) robot.intake.clawOpen();
                 else if (timer1.milliseconds() > 350) robot.scoring.clawClose();
-                else if (timer1.milliseconds() > 150) robot.intake.setTransfer();
+                else if (timer1.milliseconds() > 150) robot.intake.setTransferSample();
 
                 if (gamepad.left_bumper && !lastGamepad.left_bumper || returning) {
                     robot.scoring.arm.setTransfer();

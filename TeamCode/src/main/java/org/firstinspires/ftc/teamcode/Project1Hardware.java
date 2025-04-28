@@ -16,7 +16,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.robot.DifferentialModule;
 import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.DualServoModule;
@@ -140,15 +139,17 @@ public class Project1Hardware {
     public static class Intake extends DifferentialModule {
         ServoImplEx claw;
         boolean clawOpen = false;
+        boolean atTransfer = false;
 
         public Intake(ServoImplEx left, ServoImplEx right, ServoImplEx claw) {
             super(left, right);
             this.claw = claw;
         }
 
-        public void setIntake() {setPitch(HALF);}
-        public void setIntakeRaised() {setPitch(0.5);}
-        public void setTransfer() {setPosition(1, 0);}
+        public void setIntake() {setPitch(HALF); atTransfer = false;}
+        public void setIntakeRaised() {setPitch(0.5); atTransfer = false;}
+        public void setTransferSample() {setPosition(1, 0); atTransfer = true;}
+        public void setTransferSpecimen() {setPosition(0.7, 0); atTransfer = true;}
 
         public void clawOpen() {claw.setPosition(0.2); clawOpen = true;}
         public void clawClose() {claw.setPosition(0); clawOpen = false;}
@@ -173,9 +174,10 @@ public class Project1Hardware {
         }
 
         public static class Arm extends DualServoModule {
+            boolean atTransfer = false;
             public Arm(ServoImplEx left, ServoImplEx right) {super(left, right);}
-            public void setTransfer() {setPosition(0);}
-            public void setScoring() {setPosition(0.68);}
+            public void setTransfer() {setPosition(0); atTransfer = true;}
+            public void setScoring() {setPosition(0.68); atTransfer = false;}
         }
 
         public static class Puncher extends DualServoModule {
@@ -193,10 +195,11 @@ public class Project1Hardware {
         }
 
         public void setTurret(double angle) {
-            turret.setPosition(Range.clip(
-                    (angle + TURRET_RANGE / 2) / TURRET_RANGE,
-                    0.15, 0.85
-            ));
+            if (puncher.getPosition() >= 0.19)
+                turret.setPosition(Range.clip(
+                        (angle + TURRET_RANGE / 2) / TURRET_RANGE,
+                        0.15, 0.85
+                ));
         }
 
         public void alignTurret(double imu, double target) {

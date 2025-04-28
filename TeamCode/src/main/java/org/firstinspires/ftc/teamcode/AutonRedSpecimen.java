@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous (name = "RedSpecimen")
@@ -222,7 +221,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         roadrunner.setTarget(9.17, -37.82, 315);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
-                        robot.intake.setTransfer();
+                        robot.intake.setTransferSample();
                         robot.scoring.clawOpen();
                         if (intakeTransferConfirm) robot.scoring.clawClose();
 
@@ -274,7 +273,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         roadrunner.setTarget(9.17, -37.82, 315);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
-                        robot.intake.setTransfer();
+                        robot.intake.setTransferSample();
                         robot.scoring.clawOpen();
                         if (intakeTransferConfirm) robot.scoring.clawClose();
 
@@ -326,7 +325,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         roadrunner.setTarget(9.17, -37.82, 315);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
-                        robot.intake.setTransfer();
+                        robot.intake.setTransferSample();
                         robot.scoring.clawOpen();
                         if (intakeTransferConfirm) robot.scoring.clawClose();
 

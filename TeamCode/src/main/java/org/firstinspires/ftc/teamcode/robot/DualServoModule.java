@@ -22,4 +22,6 @@ public class DualServoModule {
         left.setPosition(position + offsetLeft);
         right.setPosition(position + offsetRight);
     }
+
+    public double getPosition() {return left.getPosition() - offsetLeft;}
 }
