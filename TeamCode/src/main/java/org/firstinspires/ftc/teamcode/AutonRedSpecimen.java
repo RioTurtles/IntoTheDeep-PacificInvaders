@@ -60,7 +60,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
         waitForStart();
         autonomous.reset();
-        roadrunner.setPoseEstimate(9.34, -62.57, 90.00);
+        roadrunner.setPoseEstimate(14.68, -63.63, 90.00);
         while (opModeIsActive()) {
             if (intake) specimenScored = false;
             if (!intake) specimenScored = true;
@@ -75,7 +75,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
             if (state == States.PRELOAD) {
                 // TODO: Tune y value
-                roadrunner.setTarget(0, -28.57, 90);
+                roadrunner.setTarget(0, -31.77, 90);
                 if (roadrunner.getTargetY() >= -42.81) {
                     // Ready score
                     robot.verticalSlider.setHighChamber();
@@ -91,7 +91,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
                 if (state == States.SCORE_PRELOAD) {
                     // TODO: Tune y value
-                    roadrunner.setTarget(0, -28.57, 90);
+                    roadrunner.setTarget(0, -31.77, 90);
 
                     if (timer1.milliseconds() > 800) {
                         // Return
@@ -108,7 +108,9 @@ public class AutonRedSpecimen extends LinearOpMode {
                         // Score
                         robot.verticalSlider.setHighChamber();
                         robot.scoring.arm.setScoring();
-                        robot.scoring.alignTurret(robot.getHeadingDeg(), 90);
+                        if (turretMove_Confirm) {
+                            robot.scoring.alignTurret(robot.getHeadingDeg(), 90);
+                        }
                         robot.scoring.clawClose();
 
                         if (vert_ScoreReturn_Confirm) {
@@ -240,7 +242,9 @@ public class AutonRedSpecimen extends LinearOpMode {
                                 robot.intake.clawOpen();
                                 robot.verticalSlider.setHighChamber();
                                 robot.scoring.arm.setScoring();
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 30);
+                                if (turretMove_Confirm) {
+                                    robot.scoring.alignTurret(robot.getHeadingDeg(), 30);
+                                }
                                 robot.scoring.clawClose();
 
                                 if (vert_ScoreReturn_Confirm) {
@@ -251,7 +255,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
                     } else {
                         // Intake specimen from ground
-                        roadrunner.setTarget(23.76, -52.06, 315);
+                        roadrunner.setTarget(25.01, -50.82, 315);
                         robot.intake.setIntake();
                         robot.intake.clawOpen();
                         // TODO: add limelight
@@ -291,7 +295,9 @@ public class AutonRedSpecimen extends LinearOpMode {
                                 robot.intake.clawOpen();
                                 robot.verticalSlider.setHighChamber();
                                 robot.scoring.arm.setScoring();
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 35);
+                                if (turretMove_Confirm) {
+                                    robot.scoring.alignTurret(robot.getHeadingDeg(), 35);
+                                }
                                 robot.scoring.clawClose();
 
                                 if (vert_ScoreReturn_Confirm) {
@@ -302,7 +308,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
                     } else {
                         // Intake specimen from ground
-                        roadrunner.setTarget(23.76, -52.06, 315);
+                        roadrunner.setTarget(25.01, -50.82,315);
                         robot.intake.setIntake();
                         robot.intake.clawOpen();
                         // TODO: add limelight
@@ -342,7 +348,9 @@ public class AutonRedSpecimen extends LinearOpMode {
                                 robot.intake.clawOpen();
                                 robot.verticalSlider.setHighChamber();
                                 robot.scoring.arm.setScoring();
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 40);
+                                if (turretMove_Confirm) {
+                                    robot.scoring.alignTurret(robot.getHeadingDeg(), 40);
+                                }
                                 robot.scoring.clawClose();
 
                                 if (vert_ScoreReturn_Confirm) {
@@ -353,7 +361,7 @@ public class AutonRedSpecimen extends LinearOpMode {
 
                     } else {
                         // Intake specimen
-                        roadrunner.setTarget(23.76, -52.06, 315);
+                        roadrunner.setTarget(25.01, -50.82,315);
                         robot.intake.setIntake();
                         robot.intake.clawOpen();
                         // TODO: add limelight
@@ -362,7 +370,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                 }
 
                 if (state == States.PARK) {
-                    roadrunner.setTarget(23.76, -52.06, 315);
+                    roadrunner.setTarget(25.01, -50.82,315);
                     robot.intake.setIntake();
                     robot.linearSlider.setExtended();
                     robot.intake.clawOpen();

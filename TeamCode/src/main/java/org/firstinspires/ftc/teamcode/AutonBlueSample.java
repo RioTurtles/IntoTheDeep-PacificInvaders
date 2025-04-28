@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous (name = "RedSample")
-public class AutonRedSample extends LinearOpMode {
+@Autonomous (name = "blueSample")
+public class AutonBlueSample extends LinearOpMode {
     enum States {
         PRELOAD,
         SCORE_PRELOAD,
@@ -46,7 +46,7 @@ public class AutonRedSample extends LinearOpMode {
 
         waitForStart();
         autonomous.reset();
-        roadrunner.setPoseEstimate(-33.2, -63.1, 90.00);
+        roadrunner.setPoseEstimate(33.2, 63.1, 270.00);
 
         while (opModeIsActive()) {
 
@@ -60,11 +60,11 @@ public class AutonRedSample extends LinearOpMode {
 
             if (state == States.PRELOAD) {
                 // TODO: Tune x, y, heading values
-                roadrunner.setTarget(-54.02, -52.95, 225);
+                roadrunner.setTarget(54.02, 52.95, 45);
                 if (roadrunner.isInPosition() || timer1.milliseconds() > 750) {
                     robot.verticalSlider.setHighBasket();
                     robot.scoring.arm.setScoring();
-                    robot.scoring.alignTurret(robot.getHeadingDeg(), 225);
+                    robot.scoring.alignTurret(robot.getHeadingDeg(), 45);
                     robot.scoring.clawClose();
                 }
                 if (autonomous.seconds() > 3 || vert_ScoreReturn_Confirm) {
@@ -75,7 +75,7 @@ public class AutonRedSample extends LinearOpMode {
 
             if (state == States.SCORE_PRELOAD) {
                 // TODO: Tune y value
-                roadrunner.setTarget(-54.02, -52.95, 225);
+                roadrunner.setTarget(54.02, 52.95, 45);
 
                 if (timer1.milliseconds() > 800) {
                     // Return
@@ -93,7 +93,7 @@ public class AutonRedSample extends LinearOpMode {
                     robot.verticalSlider.setHighBasket();
                     robot.scoring.arm.setScoring();
                     if (turretMove_Confirm) {
-                        robot.scoring.alignTurret(robot.getHeadingDeg(), 225);
+                        robot.scoring.alignTurret(robot.getHeadingDeg(), 45);
                     }
                     robot.scoring.clawClose();
 
@@ -112,7 +112,7 @@ public class AutonRedSample extends LinearOpMode {
                 // TODO: Tune x, y and heading value
                 if (intake) {
                     // Ready score
-                    roadrunner.setTarget(-54.02, -52.95, 225);
+                    roadrunner.setTarget(54.02, 52.95, 45);
                     robot.intake.setTransferSample();
                     robot.intake.clawClose();
                     robot.scoring.clawOpen();
@@ -126,7 +126,7 @@ public class AutonRedSample extends LinearOpMode {
                     }
                 } else {
                     // Intake sample
-                    roadrunner.setTarget(-54.38, -46.72, 270);
+                    roadrunner.setTarget(54.38, 46.72, 90);
                     robot.linearSlider.setExtended();
                     robot.intake.setIntake();
                     robot.intake.clawOpen();
@@ -152,7 +152,7 @@ public class AutonRedSample extends LinearOpMode {
                         timer1.reset();
                     } else {
                         // Score sample
-                        roadrunner.setTarget(-54.02, -52.78, 225);
+                        roadrunner.setTarget(54.02, 52.95, 45);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
                         robot.intake.setTransferSpecimen();
@@ -164,7 +164,7 @@ public class AutonRedSample extends LinearOpMode {
                             robot.verticalSlider.setHighBasket();
                             robot.scoring.arm.setScoring();
                             if (turretMove_Confirm) {
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 225);
+                                robot.scoring.alignTurret(robot.getHeadingDeg(), 45);
                             }
                             robot.scoring.clawClose();
 
@@ -180,7 +180,7 @@ public class AutonRedSample extends LinearOpMode {
                 // TODO: Tune x, y and heading value
                 if (intake) {
                     // Ready score
-                    roadrunner.setTarget(-54.38, -46.72, 270);
+                    roadrunner.setTarget(54.38, 46.72, 90);
                     robot.intake.setTransferSample();
                     robot.intake.clawClose();
                     robot.scoring.clawOpen();
@@ -194,7 +194,7 @@ public class AutonRedSample extends LinearOpMode {
                     }
                 } else {
                     // Intake sample
-                    roadrunner.setTarget(-54.38, -46.72, 260);
+                    roadrunner.setTarget(54.38, 46.72, 80);
                     robot.linearSlider.setExtended();
                     robot.intake.setIntake();
                     robot.intake.clawOpen();
@@ -219,7 +219,7 @@ public class AutonRedSample extends LinearOpMode {
                         state = States.INTAKE_3;
                         timer1.reset();
                     } else {
-                        roadrunner.setTarget(-60.07, -48.68, 270);
+                        roadrunner.setTarget(60.07, 48.68, 90);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
                         robot.intake.setTransferSpecimen();
@@ -231,7 +231,7 @@ public class AutonRedSample extends LinearOpMode {
                             robot.verticalSlider.setHighBasket();
                             robot.scoring.arm.setScoring();
                             if (turretMove_Confirm) {
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 225);
+                                robot.scoring.alignTurret(robot.getHeadingDeg(), 45);
                             }
                             robot.scoring.clawClose();
 
@@ -247,7 +247,7 @@ public class AutonRedSample extends LinearOpMode {
                 // TODO: Tune x, y and heading value
                 if (intake) {
                     // Ready score
-                    roadrunner.setTarget(-54.38, -46.72, 270);
+                    roadrunner.setTarget(54.38, 46.72, 90);
                     robot.intake.setTransferSample();
                     robot.intake.clawClose();
                     robot.scoring.clawOpen();
@@ -261,7 +261,7 @@ public class AutonRedSample extends LinearOpMode {
                     }
                 } else {
                     // Intake sample
-                    roadrunner.setTarget(-54.38, -46.72, 235);
+                    roadrunner.setTarget(54.38, 46.72, 55);
                     robot.linearSlider.setExtended();
                     robot.intake.setIntake();
                     robot.intake.clawOpen();
@@ -287,7 +287,7 @@ public class AutonRedSample extends LinearOpMode {
                         timer1.reset();
                     } else {
                         // Score
-                        roadrunner.setTarget(-60.07, -48.68, 270);
+                        roadrunner.setTarget(60.07, 48.68, 90);
                         robot.intake.clawClose();
                         robot.linearSlider.retract();
                         robot.intake.setTransferSpecimen();
@@ -299,7 +299,7 @@ public class AutonRedSample extends LinearOpMode {
                             robot.verticalSlider.setHighBasket();
                             robot.scoring.arm.setScoring();
                             if (turretMove_Confirm) {
-                                robot.scoring.alignTurret(robot.getHeadingDeg(), 225);
+                                robot.scoring.alignTurret(robot.getHeadingDeg(), 45);
                             }
                             robot.scoring.clawClose();
 
@@ -312,7 +312,7 @@ public class AutonRedSample extends LinearOpMode {
             }
 
             if (state == States.PARK) {
-                roadrunner.setTarget(0, -31.59, 90);
+                roadrunner.setTarget(0, 31.59, 270);
                 robot.intake.setIntakeRaised();
 
                 if (roadrunner.isInPosition() || autonomous.seconds() > 27.5) {
