@@ -98,7 +98,9 @@ public class TeleoperatedV1 extends LinearOpMode {
                     assert data != null;
                     double tx = data[0]; double ty = data[1]; double orientation = data[2];
                     horizontal = pidX.calculate(0, tx, loopTime.seconds());
-                    vertical = pidY.calculate(0, ty, loopTime.seconds());
+                    robot.linearSlider.setPosition((int) Math.round(pidY.calculate(
+                            0, ty, loopTime.seconds()
+                    )));
                     robot.intake.setOrientation(orientation);
                 } else {
                     pidX.reset();

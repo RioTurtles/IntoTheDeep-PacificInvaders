@@ -30,7 +30,7 @@ public class LimelightTestHardware {
     DcMotorEx slider, arm;
     ServoImplEx claw;
     IMU imu;
-    Limelight3A limelight;
+//    Limelight3A limelight;
 
     ScoringMode scoringMode;
     ScoringHeight scoringHeight;
@@ -54,7 +54,7 @@ public class LimelightTestHardware {
         slider = hardwareMap.get(DcMotorEx.class, "slider");
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         claw = hardwareMap.get(ServoImplEx.class, "claw");
-        limelight = hardwareMap.get(Limelight3A.class, "Limelight 3A");
+//        limelight = hardwareMap.get(Limelight3A.class, "Limelight 3A");
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
@@ -224,47 +224,47 @@ public class LimelightTestHardware {
     public String getScoringState() {return scoringMode + " | " + scoringHeight;}
     public double getIMUYaw() {return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);}
 
-    public void startLimelight(int pipeline) {
-        limelight.setPollRateHz(100);
-        limelight.pipelineSwitch(pipeline);
-        limelight.start();
-    }
-
-    public void startLimelight(LimelightPipeline pipeline) {startLimelight(pipeline.getIndex());}
-
-    public void switchLimelightPipeline(LimelightPipeline pipeline) {
-        limelight.pipelineSwitch(pipeline.getIndex());
-    }
-
-    public double getLimelightSampleOrientation() {
-        double angle = 0;
-        LLResultTypes.ColorResult r = getLimelightResults().getColorResults().get(0);
-        ArrayList<Util.Coordinate> coordinates = new ArrayList<>();
-        ArrayList<Double> lengths = new ArrayList<>();
-        for (List<Double> corner : r.getTargetCorners())
-            coordinates.add(new Util.Coordinate(corner.get(0), corner.get(1)));
-        for (Util.Coordinate coordinate : coordinates)
-            lengths.add(coordinates.get(0).distanceTo(coordinate));
-        for (Util.Coordinate coordinate : coordinates)
-            if (coordinates.get(0).distanceTo(coordinate) == Util.max(lengths))
-                angle = Math.toDegrees(Math.atan(coordinates.get(0).slopeWith(coordinate)));
-
-        return angle;
-    }
-
-    public enum LimelightPipeline {
-        NEURAL_DETECTOR(4),
-        COLOUR_YELLOW(1),
-        COLOUR_RED(2),
-        COLOUR_BLUE(3);
-
-        private final int index;
-        LimelightPipeline(int index) {this.index = index;}
-        public int getIndex() {return index;}
-    }
-
-    public void switchLimelightPipeline(int index) {limelight.pipelineSwitch(index);}
-    public LLResult getLimelightResults() {return limelight.getLatestResult();}
+//    public void startLimelight(int pipeline) {
+//        limelight.setPollRateHz(100);
+//        limelight.pipelineSwitch(pipeline);
+//        limelight.start();
+//    }
+//
+//    public void startLimelight(LimelightPipeline pipeline) {startLimelight(pipeline.getIndex());}
+//
+//    public void switchLimelightPipeline(LimelightPipeline pipeline) {
+//        limelight.pipelineSwitch(pipeline.getIndex());
+//    }
+//
+//    public double getLimelightSampleOrientation() {
+//        double angle = 0;
+//        LLResultTypes.ColorResult r = getLimelightResults().getColorResults().get(0);
+//        ArrayList<Util.Coordinate> coordinates = new ArrayList<>();
+//        ArrayList<Double> lengths = new ArrayList<>();
+//        for (List<Double> corner : r.getTargetCorners())
+//            coordinates.add(new Util.Coordinate(corner.get(0), corner.get(1)));
+//        for (Util.Coordinate coordinate : coordinates)
+//            lengths.add(coordinates.get(0).distanceTo(coordinate));
+//        for (Util.Coordinate coordinate : coordinates)
+//            if (coordinates.get(0).distanceTo(coordinate) == Util.max(lengths))
+//                angle = Math.toDegrees(Math.atan(coordinates.get(0).slopeWith(coordinate)));
+//
+//        return angle;
+//    }
+//
+//    public enum LimelightPipeline {
+//        NEURAL_DETECTOR(4),
+//        COLOUR_YELLOW(1),
+//        COLOUR_RED(2),
+//        COLOUR_BLUE(3);
+//
+//        private final int index;
+//        LimelightPipeline(int index) {this.index = index;}
+//        public int getIndex() {return index;}
+//    }
+//
+//    public void switchLimelightPipeline(int index) {limelight.pipelineSwitch(index);}
+//    public LLResult getLimelightResults() {return limelight.getLatestResult();}
 }
 
 class MecanumDrive {

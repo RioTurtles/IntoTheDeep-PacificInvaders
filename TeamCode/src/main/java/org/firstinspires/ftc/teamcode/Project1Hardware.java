@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.Drivetrain;
 import org.firstinspires.ftc.teamcode.robot.DualServoModule;
 import org.firstinspires.ftc.teamcode.robot.MultipleMotorSystem;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -277,7 +278,7 @@ public class Project1Hardware {
             public double getY() {return y;}
 
             public static List<Coordinate> fromTargetCorners(List<List<Double>> corners) {
-                List<Coordinate> result = Collections.emptyList();
+                List<Coordinate> result = new ArrayList<>();
                 for (List<Double> corner : corners)
                     result.add(new Coordinate(corner.get(0), corner.get(1)));
                 return result;

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.archive;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,9 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Objects;
 
-import org.firstinspires.ftc.teamcode.archive.LimelightTestHardware.LimelightPipeline;
-
-@Disabled
 @TeleOp
 public class LimelightTester extends LinearOpMode {
     @Override
@@ -23,11 +18,7 @@ public class LimelightTester extends LinearOpMode {
         Gamepad operator = new Gamepad(), lastOperator = new Gamepad();
         ElapsedTime timer1 = new ElapsedTime();
         ElapsedTime loopTime = new ElapsedTime();
-
-
         PIDController headingController = new PIDController(0.55, 0.001, 0);
-        PIDController limelightX = new PIDController(0.55, 0.001, 0);
-        PIDController limelightY = new PIDController(0.55, 0.001, 0);
 
         Double autoAlignTarget;
         double vertical, horizontal, pivot, heading;
@@ -36,7 +27,6 @@ public class LimelightTester extends LinearOpMode {
         boolean returning = false, chambered = false;
 
         waitForStart();
-        robot.startLimelight(LimelightPipeline.NEURAL_DETECTOR);
         while (opModeIsActive()) {
             lastGamepad.copy(gamepad); gamepad.copy(gamepad1);
             lastOperator.copy(operator); operator.copy(gamepad2);
@@ -66,9 +56,11 @@ public class LimelightTester extends LinearOpMode {
                     robot.extendSlider();
                 }
 
-                if (gamepad.left_bumper && !lastGamepad.left_bumper) {
-                    robot.switchLimelightPipeline(LimelightPipeline.NEURAL_DETECTOR);
-                    state = State.INTAKE_LIMELIGHT_NEURAL;
+                if (gamepad.left_trigger > 0 && lastGamepad.left_trigger > 0) robot.extendSlider();
+
+                if (!(gamepad.left_trigger > 0) && lastGamepad.left_trigger > 0) {
+                    robot.clawOpen();
+                    robot.retractSlider();
                 }
 
                 if (gamepad.right_bumper && !lastGamepad.right_bumper) {
@@ -136,43 +128,6 @@ public class LimelightTester extends LinearOpMode {
                     state = State.TRANSFER_EXTEND;
                     timer1.reset();
                     // Arm lifts in the next state.
-                }
-            }
-
-            else if (state == State.INTAKE_LIMELIGHT_NEURAL) {
-                LLResult result = robot.getLimelightResults();
-                if (result.isValid()) {
-                    double x = result.getTx() / 640;
-                    double y = result.getTy() / 320;
-                    horizontal = limelightX.calculate(0, x, loopTime.seconds());
-                    vertical = limelightY.calculate(0, y, loopTime.seconds());
-
-                    if (horizontal <= 0.005 && vertical <= 0.005) {
-                        horizontal = 0;
-                        vertical = 0;
-
-                        switch (result.getDetectorResults().get(0).getClassName()) {
-                            case "yellow": robot.switchLimelightPipeline(1); break;
-                            case "red": robot.switchLimelightPipeline(2); break;
-                            case "blue": robot.switchLimelightPipeline(3); break;
-                        }
-                        state = State.INTAKE_LIMELIGHT_COLOUR;
-                    }
-                }
-
-                if (gamepad.left_bumper && !lastGamepad.left_bumper) {
-                    state = State.INTAKE;
-                    timer1.reset();
-                }
-            }
-
-            else if (state == State.INTAKE_LIMELIGHT_COLOUR) {
-                double orientation = robot.getLimelightSampleOrientation();
-                pivot = headingController.calculate(orientation, Math.toDegrees(robot.getIMUYaw()),
-                        loopTime.seconds());
-                if (headingController.lastError <= 4) {
-                    robot.clawClose();
-                    state = State.TRANSFER_ARM;
                 }
             }
 
