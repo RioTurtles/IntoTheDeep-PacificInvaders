@@ -62,7 +62,7 @@ public class Project1Hardware {
         armRight = hardwareMap.get(ServoImplEx.class, "armRight");
         turret = hardwareMap.get(ServoImplEx.class, "turret");
         clawScoring = hardwareMap.get(ServoImplEx.class, "clawScoring");
-        limelight3A = hardwareMap.get(Limelight3A.class, "Limelight 3A");
+        // limelight3A = hardwareMap.get(Limelight3A.class, "Limelight 3A");
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -74,8 +74,8 @@ public class Project1Hardware {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        linearRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        linearRight.setDirection(DcMotorSimple.Direction.REVERSE);
         verticalLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         verticalRight.setDirection(DcMotorSimple.Direction.FORWARD);
         intakeLeft.setDirection(Servo.Direction.FORWARD);
@@ -84,7 +84,7 @@ public class Project1Hardware {
         puncherLeft.setDirection(Servo.Direction.REVERSE);
         puncherRight.setDirection(Servo.Direction.FORWARD);
         armLeft.setDirection(Servo.Direction.REVERSE);
-        armRight.setDirection(Servo.Direction.REVERSE);
+        armRight.setDirection(Servo.Direction.FORWARD);
         turret.setDirection(Servo.Direction.FORWARD);
         clawScoring.setDirection(Servo.Direction.FORWARD);
 
@@ -115,10 +115,10 @@ public class Project1Hardware {
         public LinearSlider(DcMotorEx... motors) {
             super(motors);
             setMinimum(0);
-            setMaximum(500);  // tune this
+            setMaximum(1600);  // tune this
         }
 
-        public void setExtended() {setPosition(500);}
+        public void setExtended() {setPosition(1600);}
         public void retract() {setPosition(0);}
     }
 
@@ -177,7 +177,7 @@ public class Project1Hardware {
         public static class Arm extends DualServoModule {
             boolean atTransfer = false;
             public Arm(ServoImplEx left, ServoImplEx right) {super(left, right);}
-            public void setTransfer() {setPosition(0); atTransfer = true;}
+            public void setTransfer() {setPosition(0.02); atTransfer = true;}
             public void setScoring() {setPosition(0.68); atTransfer = false;}
         }
 
