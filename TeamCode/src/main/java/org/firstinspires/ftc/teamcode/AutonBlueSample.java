@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
+@Disabled
 @Autonomous (name = "blueSample")
 public class AutonBlueSample extends LinearOpMode {
     enum States {
@@ -80,7 +81,7 @@ public class AutonBlueSample extends LinearOpMode {
                 if (timer1.milliseconds() > 800) {
                     // Return
                     robot.verticalSlider.setPosition(0);
-                    robot.scoring.arm.setTransfer();
+                    robot.scoring.arm.setSampleTransfer();
                     robot.scoring.clawOpen();
                     if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -139,7 +140,7 @@ public class AutonBlueSample extends LinearOpMode {
                 if (timer1.milliseconds() > 2500) {
                     // Return
                     robot.verticalSlider.setPosition(0);
-                    robot.scoring.arm.setTransfer();
+                    robot.scoring.arm.setSampleTransfer();
                     robot.scoring.clawOpen();
                     if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -207,7 +208,7 @@ public class AutonBlueSample extends LinearOpMode {
                 if (timer1.milliseconds() > 2500) {
                     // Return
                     robot.verticalSlider.setPosition(0);
-                    robot.scoring.arm.setTransfer();
+                    robot.scoring.arm.setSampleTransfer();
                     robot.scoring.clawOpen();
                     if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -274,7 +275,7 @@ public class AutonBlueSample extends LinearOpMode {
                 if (timer1.milliseconds() > 2500) {
                     // Return
                     robot.verticalSlider.setPosition(0);
-                    robot.scoring.arm.setTransfer();
+                    robot.scoring.arm.setSampleTransfer();
                     robot.scoring.clawOpen();
                     if (!turretMove_Confirm) robot.scoring.setTurret(0);
 

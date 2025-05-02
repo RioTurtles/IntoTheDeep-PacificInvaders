@@ -51,7 +51,7 @@ public class TeleoperatedV1 extends LinearOpMode {
 
             else if (state == State.INTAKE_SAMPLE) {
                 returning = false;
-                robot.scoring.arm.setTransfer();
+                // robot.scoring.arm.setTransfer();
 
                 if (timer1.milliseconds() > 150) robot.intake.clawOpen();
 
@@ -111,7 +111,7 @@ public class TeleoperatedV1 extends LinearOpMode {
             else if (state == State.INTAKE_SPECIMEN) {
                 returning = false;
                 robot.intake.setIntake();
-                robot.scoring.arm.setTransfer();
+                // robot.scoring.arm.setTransfer();
 
                 if (timer1.milliseconds() > 150) robot.intake.clawOpen();
 
@@ -138,7 +138,7 @@ public class TeleoperatedV1 extends LinearOpMode {
             }
 
             else if (state == State.TRANSFER) {
-                robot.scoring.arm.setTransfer();
+                // robot.scoring.arm.setTransfer();
 
                 if (timer1.milliseconds() > 450) {
                     robot.scoring.arm.setScoring();
@@ -149,7 +149,7 @@ public class TeleoperatedV1 extends LinearOpMode {
                 else if (timer1.milliseconds() > 150) robot.intake.setTransferSample();
 
                 if (gamepad.left_bumper && !lastGamepad.left_bumper || returning) {
-                    robot.scoring.arm.setTransfer();
+                    // robot.scoring.arm.setTransfer();
                     robot.scoring.clawOpen();
                     robot.intake.setIntake();
                     if (robot.mode == Project1Hardware.Mode.SAMPLE) state = State.INTAKE_SAMPLE;

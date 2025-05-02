@@ -96,7 +96,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                     if (timer1.milliseconds() > 800) {
                         // Return
                         robot.verticalSlider.setPosition(0);
-                        robot.scoring.arm.setTransfer();
+                        robot.scoring.arm.setSpecimenTransfer();
                         robot.scoring.clawOpen();
                         if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -216,7 +216,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         if (timer1.milliseconds() > 2500) {
                             // Return
                             robot.verticalSlider.setPosition(0);
-                            robot.scoring.arm.setTransfer();
+                            robot.scoring.arm.setSpecimenTransfer();
                             robot.scoring.clawOpen();
                             if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -269,7 +269,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         // Return
                         if (timer1.milliseconds() > 2500) {
                             robot.verticalSlider.setPosition(0);
-                            robot.scoring.arm.setTransfer();
+                            robot.scoring.arm.setSpecimenTransfer();
                             robot.scoring.clawOpen();
                             if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -322,7 +322,7 @@ public class AutonRedSpecimen extends LinearOpMode {
                         // Return
                         if (timer1.milliseconds() > 2500) {
                             robot.verticalSlider.setPosition(0);
-                            robot.scoring.arm.setTransfer();
+                            robot.scoring.arm.setSpecimenTransfer();
                             robot.scoring.clawOpen();
                             if (!turretMove_Confirm) robot.scoring.setTurret(0);
 

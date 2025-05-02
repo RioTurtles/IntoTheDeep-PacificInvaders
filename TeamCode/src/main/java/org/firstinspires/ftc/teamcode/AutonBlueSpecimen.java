@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.State;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
+@Disabled
 @Autonomous (name = "BlueSpecimen")
 public class AutonBlueSpecimen extends LinearOpMode {
     /*
@@ -96,7 +97,7 @@ public class AutonBlueSpecimen extends LinearOpMode {
                 if (timer1.milliseconds() > 800) {
                     // Return
                     robot.verticalSlider.setPosition(0);
-                    robot.scoring.arm.setTransfer();
+                    robot.scoring.arm.setSpecimenTransfer();
                     robot.scoring.clawOpen();
                     if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -216,7 +217,7 @@ public class AutonBlueSpecimen extends LinearOpMode {
                     if (timer1.milliseconds() > 2500) {
                         // Return
                         robot.verticalSlider.setPosition(0);
-                        robot.scoring.arm.setTransfer();
+                        robot.scoring.arm.setSpecimenTransfer();
                         robot.scoring.clawOpen();
                         if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -269,7 +270,7 @@ public class AutonBlueSpecimen extends LinearOpMode {
                     // Return
                     if (timer1.milliseconds() > 2500) {
                         robot.verticalSlider.setPosition(0);
-                        robot.scoring.arm.setTransfer();
+                        robot.scoring.arm.setSpecimenTransfer();
                         robot.scoring.clawOpen();
                         if (!turretMove_Confirm) robot.scoring.setTurret(0);
 
@@ -322,7 +323,7 @@ public class AutonBlueSpecimen extends LinearOpMode {
                     // Return
                     if (timer1.milliseconds() > 2500) {
                         robot.verticalSlider.setPosition(0);
-                        robot.scoring.arm.setTransfer();
+                        robot.scoring.arm.setSpecimenTransfer();
                         robot.scoring.clawOpen();
                         if (!turretMove_Confirm) robot.scoring.setTurret(0);
 

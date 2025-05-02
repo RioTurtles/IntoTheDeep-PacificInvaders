@@ -83,8 +83,8 @@ public class Project1Hardware {
         clawIntake.setDirection(Servo.Direction.FORWARD);
         puncherLeft.setDirection(Servo.Direction.REVERSE);
         puncherRight.setDirection(Servo.Direction.FORWARD);
-        armLeft.setDirection(Servo.Direction.REVERSE);
-        armRight.setDirection(Servo.Direction.FORWARD);
+        armLeft.setDirection(Servo.Direction.FORWARD);
+        armRight.setDirection(Servo.Direction.REVERSE);
         turret.setDirection(Servo.Direction.FORWARD);
         clawScoring.setDirection(Servo.Direction.FORWARD);
 
@@ -177,7 +177,8 @@ public class Project1Hardware {
         public static class Arm extends DualServoModule {
             boolean atTransfer = false;
             public Arm(ServoImplEx left, ServoImplEx right) {super(left, right);}
-            public void setTransfer() {setPosition(0.02); atTransfer = true;}
+            public void setSampleTransfer() {setPosition(0.02); atTransfer = true;}
+            public void setSpecimenTransfer() {setPosition(0.07); atTransfer = true;} // TODO: Tune this
             public void setScoring() {setPosition(0.68); atTransfer = false;}
         }
 
