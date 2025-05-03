@@ -70,17 +70,24 @@ public class Project1Hardware {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
         )));
 
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        /*frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);*/
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
         linearLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         linearRight.setDirection(DcMotorSimple.Direction.REVERSE);
         verticalLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         verticalRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
         intakeLeft.setDirection(Servo.Direction.FORWARD);
         intakeRight.setDirection(Servo.Direction.REVERSE);
         clawIntake.setDirection(Servo.Direction.FORWARD);
+
         puncherLeft.setDirection(Servo.Direction.REVERSE);
         puncherRight.setDirection(Servo.Direction.FORWARD);
         armLeft.setDirection(Servo.Direction.FORWARD);
@@ -118,6 +125,10 @@ public class Project1Hardware {
             setMaximum(1600);  // tune this
         }
 
+        public void set(int pos) {
+            setPosition(Math.min(pos, 1600));
+        }
+
         public void setExtended() {setPosition(1600);}
         public void retract() {setPosition(0);}
     }
@@ -141,6 +152,7 @@ public class Project1Hardware {
         ServoImplEx claw;
         boolean clawOpen = false;
         boolean atTransfer = false;
+        boolean extendedPuncher = false;
 
         public Intake(ServoImplEx left, ServoImplEx right, ServoImplEx claw) {
             super(left, right);
@@ -148,11 +160,13 @@ public class Project1Hardware {
         }
 
         public void setIntake() {setPitch(HALF); atTransfer = false;}
+        public void setSampleIntake() {setPitch(0.3); atTransfer = false;}
+        public void setSpecimenIntake() {setPitch(0.45);}
         public void setIntakeRaised() {setPitch(0.5); atTransfer = false;}
         public void setTransferSample() {setPosition(1, 0); atTransfer = true;}
-        public void setTransferSpecimen() {setPosition(0.7, 0); atTransfer = true;}
+        public void setTransferSpecimen() {setPosition(0.96, 0); atTransfer = true;}
 
-        public void clawOpen() {claw.setPosition(0.2); clawOpen = true;}
+        public void clawOpen() {claw.setPosition(0.26); clawOpen = true;}
         public void clawClose() {claw.setPosition(0); clawOpen = false;}
     }
 
@@ -178,18 +192,20 @@ public class Project1Hardware {
             boolean atTransfer = false;
             public Arm(ServoImplEx left, ServoImplEx right) {super(left, right);}
             public void setSampleTransfer() {setPosition(0.02); atTransfer = true;}
-            public void setSpecimenTransfer() {setPosition(0.07); atTransfer = true;} // TODO: Tune this
+            public void setSpecimenTransfer() {setPosition(0.0588); atTransfer = true;} // TODO: Tune this
             public void setScoring() {setPosition(0.68); atTransfer = false;}
+            public void setSpecimenScoring() {setPosition(0.68);}
         }
 
         public static class Puncher extends DualServoModule {
+            boolean extendedPuncher = false;
             public static final double RETRACTED = 0.19;
             public static final double EXTENDED = 0.59;
             public Puncher(ServoImplEx left, ServoImplEx right) {super(left, right, +0.02, 0);}
 
-            public void setRetracted() {setPosition(RETRACTED);}
+            public void setRetracted() {setPosition(RETRACTED); extendedPuncher = false;}
             public void setAim() {setPosition((RETRACTED - EXTENDED) / 2);}
-            public void setExtended() {setPosition(EXTENDED);}
+            public void setExtended() {setPosition(EXTENDED); extendedPuncher = true;}
 
             public void setLength(double length) {
                 setPosition(RETRACTED + (EXTENDED - RETRACTED) * length);
